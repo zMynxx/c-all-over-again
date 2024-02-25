@@ -1,0 +1,78 @@
+FROM ubuntu:22.04 as base
+
+MAINTAINER lior.dux@develeap.com
+
+# Install the required packages
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+  apt-get install --yes --no-install-recommends \
+  ca-certificates \
+  systemd \
+  build-essential \
+  git \
+  make \
+  gcc \
+  gcc-avr \
+  valgrind \
+  vim \
+  bash \
+  wget \
+  curl \
+  libz-dev \
+  doxygen
+
+# Clean the apt cache
+RUN	apt-get clean &&\
+  rm -rf /var/cache/apt/archives/* && \
+  rm -rf /var/lib/apt/lists/*
+
+# Set the timezone on build time
+# ARG TZ Asia/Jerusalem
+# ENV TZ $TZ
+# RUN timedatectl set-timezone $TZ
+
+# Install rbenv-build 
+#RUN curl --fail --silent --show-error --location https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
+RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash 
+
+# Validate rbenv using rbev-doctor
+#RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
+
+# Set rbenv version desired on build time
+ARG RBENV_VERSION=3.0.6
+ENV RBENV_VERSION $RBENV_VERSION
+
+# Install rbenv and set the desired version
+RUN echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
+ENV PATH="$PATH:/root/.rbenv/bin:/root/.rbenv/shims"
+RUN /root/.rbenv/bin/rbenv install $RBENV_VERSION &&\
+    /root/.rbenv/bin/rbenv global $RBENV_VERSION
+
+# Install ceedling, cmock and unity
+RUN /root/.rbenv/shims/gem install ceedling
+
+################################################################################
+# Create a final stage for running your application.
+#
+# The following commands copy the output from the "build" stage above and tell
+# the container runtime to execute it when the image is run. Ideally this stage
+# contains the minimal runtime dependencies for the application as to produce
+# the smallest image possible. This often means using a different and smaller
+# image than the one used for building the application, but for illustrative
+# purposes the "base" image is used here.
+# FROM base AS final
+# 
+# # Create a non-privileged user that the app will run under.
+# # See https://docs.docker.com/go/dockerfile-user-best-practices/
+ARG UID=10001
+ARG USER=ubuntu
+ENV USER $USER
+RUN useradd \
+     --home "/nonexistent" \
+     --shell "/bin/bash" \
+     --create-home \
+     --uid "${UID}" \
+     --groups sudo \
+     $USER
+USER $USER
+CMD bash
