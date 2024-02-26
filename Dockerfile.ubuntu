@@ -34,22 +34,20 @@ RUN	apt-get clean &&\
 # Install rbenv-build 
 #RUN curl --fail --silent --show-error --location https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
 RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash 
+ENV PATH="$PATH:/root/.rbenv/bin:/root/.rbenv/shims"
 
 # Validate rbenv using rbev-doctor
-#RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
-
-# Set rbenv version desired on build time
-ARG RBENV_VERSION=3.0.6
-ENV RBENV_VERSION $RBENV_VERSION
+RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
+RUN echo 'eval "$(~/.rbenv/bin/rbenv init -)"' >> /etc/profile.d/rbenv.sh
 
 # Install rbenv and set the desired version
-RUN echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
-ENV PATH="$PATH:/root/.rbenv/bin:/root/.rbenv/shims"
-RUN /root/.rbenv/bin/rbenv install $RBENV_VERSION &&\
-    /root/.rbenv/bin/rbenv global $RBENV_VERSION
+ARG RBENV_VERSION=3.0.6
+ENV RBENV_VERSION $RBENV_VERSION
+RUN rbenv install $RBENV_VERSION &&\
+    rbenv global $RBENV_VERSION
 
 # Install ceedling, cmock and unity
-RUN /root/.rbenv/shims/gem install ceedling
+RUN gem install ceedling
 
 ################################################################################
 # Create a final stage for running your application.
@@ -64,15 +62,15 @@ RUN /root/.rbenv/shims/gem install ceedling
 # 
 # # Create a non-privileged user that the app will run under.
 # # See https://docs.docker.com/go/dockerfile-user-best-practices/
-ARG UID=10001
-ARG USER=ubuntu
-ENV USER $USER
-RUN useradd \
-     --home "/nonexistent" \
-     --shell "/bin/bash" \
-     --create-home \
-     --uid "${UID}" \
-     --groups sudo \
-     $USER
-USER $USER
+# ARG UID=10001
+# ARG USER=ubuntu
+# ENV USER $USER
+# RUN useradd \
+#      --uid "${UID}" \
+#      --create-home \
+#      --shell "/bin/bash" \
+#      --groups sudo \
+#      $USER
+# USER $USER
+WORKDIR /project
 CMD bash
