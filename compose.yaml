@@ -2,18 +2,27 @@
 # If you need more help, visit the Docker compose reference guide at
 # https://docs.docker.com/go/compose-spec-reference/
 
-# Here the instructions define your application as a service called "app".
+# Here the instructions define your application as a service called app.
 # This service is built from the Dockerfile in the current directory.
 # You can add other services your application may depend on here, such as a
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
   app:
-    image: druxx/ubuntu-ceedling:22.04-v0.31.1
     platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile.ubuntu
+      tags:
+        - druxx/ubuntu-ceedling:22.04-v0.31.1
+        - druxx/ubuntu-ceedling:latest
+      args:
+        - RBENV_VERSION=3.0.6
+      labels:
+        - maintainer.email=lior.dux@develeap.com
+        - maintainer.description=C Development environment
+        - ceedling.version=v0.31.1
+        - doxygen.version=v1.9.1
     tty: true
     stdin_open: true
     command: /bin/bash

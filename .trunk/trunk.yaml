@@ -19,7 +19,6 @@ lint:
   enabled:
     - checkov@3.2.24
     - git-diff-check
-    - hadolint@2.12.0
     - markdownlint@0.39.0
     - prettier@3.2.5
     - terrascan@1.18.11
