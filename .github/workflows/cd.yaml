@@ -75,8 +75,8 @@ jobs:
         id: semver
         uses: zmynx/github-actions/.github/actions/git/semver-v2@feature/gha
         with:
-          fallback_version: '0.1.0'
-          prefix: 'v' 
+          fallback_version: "0.1.0"
+          prefix: "v"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v0.1.15
@@ -104,4 +104,3 @@ jobs:
             ${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
