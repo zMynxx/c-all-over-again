@@ -27,7 +27,7 @@ jobs:
 
   cd:
     name: continuous-deployment
-    needs: [check, ci]
+    needs: [check]
     runs-on: ubuntu-22.04
     outputs:
       new_tag: ${{ steps.semver.outputs.new_tag }}
@@ -84,6 +84,14 @@ jobs:
           files: /project-demo/build/artifacts/release/MyApp.out
           tag_name: ${{ steps.semver.outputs.new_tag }}
 
+      - name: Git Config
+        uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
+
+      - name: Git Tag
+        uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
+        with:
+          tag: "${{ format('{0}{1}', 'v', steps.semver.outputs.new_tag) }}"
+
       - name: Publish image to DockerHub
         uses: docker/build-push-action@v5.1.0
         with:
@@ -97,10 +105,3 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Git Config
-        uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
-
-      - name: Git Tag
-        uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
-        with:
-          tag: "${{ format('{0}{1}', 'v', steps.semver.outputs.new_tag) }}"
