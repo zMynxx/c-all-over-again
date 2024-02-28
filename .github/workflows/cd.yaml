@@ -36,6 +36,9 @@ jobs:
           push: false
           load: true
           tags: ${{ env.TEST_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Generate Release
         run: |
           docker run \
@@ -51,11 +54,13 @@ jobs:
         with:
           files: build/artifacts/release/MyApp.out
 
-      #       - name: Build and push
-      #         uses: docker/build-push-action@v5.1.0
-      #         with:
-      #           context: .
-      #           file: Dockerfile.ubuntu
-      #           platforms: linux/amd64
-      #           push: false
-      #           tags: ${{ env.LATEST_TAG }}
+      - name: Build and push
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: Dockerfile.ubuntu
+          platforms: linux/amd64
+          push: false
+          tags: ${{ env.LATEST_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
