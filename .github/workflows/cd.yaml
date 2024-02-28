@@ -19,17 +19,11 @@ env:
 
 jobs:
   check:
-  name: check pr status
-  runs-on: ubuntu-22.04
-  steps:
-    - name: check if PR is merged
-      uses: zmynx/github-actions/.github/actions/git/check-merge@feature/gha
-
-  ci:
-    needs: [check]
-    name: continuous integration
-    uses: zmynx/c-all-over-again/.github/workflows/ci.yaml@main
-    secrets: inherit
+    name: check pr status
+    runs-on: ubuntu-22.04
+    steps:
+      - name: check if PR is merged
+        uses: zmynx/github-actions/.github/actions/git/check-merge@feature/gha
 
   cd:
     name: continuous-deployment
