@@ -1,13 +1,15 @@
-name: CI
+name: CD
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - "main"
+  #pull_request:
+  #  branches:
+  #  - "main"
+  #tags:
+  #    - "v*.*.*"
 
 env:
-  TEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.32.0
+  TEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.31.1
   LATEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:latest
 
 jobs:
@@ -34,11 +36,26 @@ jobs:
           push: false
           load: true
           tags: ${{ env.TEST_TAG }}
-      - name: Test
+      - name: Generate Release
         run: |
           docker run \
           --interactive \
           --rm \
           --volume ./project-demo/demo2:/project \
           ${{ env.TEST_TAG }} \
-          ceedling test:all
+          ceedling release
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v0.1.15
+        #if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/artifacts/release/MyApp.out
+
+      #       - name: Build and push
+      #         uses: docker/build-push-action@v5.1.0
+      #         with:
+      #           context: .
+      #           file: Dockerfile.ubuntu
+      #           platforms: linux/amd64
+      #           push: false
+      #           tags: ${{ env.LATEST_TAG }}
