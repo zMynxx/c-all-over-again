@@ -27,7 +27,7 @@ jobs:
 
   cd:
     name: continuous-deployment
-    needs: [check, ci]
+    needs: [check]
     runs-on: ubuntu-22.04
     outputs:
       new_tag: ${{ steps.semver.outputs.new_tag }}
@@ -75,14 +75,22 @@ jobs:
         id: semver
         uses: zmynx/github-actions/.github/actions/git/semver-v2@feature/gha
         with:
-          fallback_version: '0.1.0'
-          prefix: 'v' 
+          fallback_version: "0.1.0"
+          prefix: "v"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v0.1.15
         with:
           files: /project-demo/build/artifacts/release/MyApp.out
           tag_name: ${{ steps.semver.outputs.new_tag }}
+
+      - name: Git Config
+        uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
+
+      - name: Git Tag
+        uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
+        with:
+          tag: "${{ format('{0}{1}', 'v', steps.semver.outputs.new_tag) }}"
 
       - name: Publish image to DockerHub
         uses: docker/build-push-action@v5.1.0
@@ -96,11 +104,3 @@ jobs:
             ${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Git Config
-        uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
-
-      - name: Git Tag
-        uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
-        with:
-          tag: "${{ format('{0}{1}', 'v', steps.semver.outputs.new_tag) }}"
