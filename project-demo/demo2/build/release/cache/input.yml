@@ -1,0 +1,292 @@
+---
+:project:
+  :use_mocks: true
+  :compile_threads: 8
+  :test_threads: 8
+  :use_test_preprocessor: true
+  :test_file_prefix: test_
+  :options_paths: []
+  :release_build: true
+  :use_backtrace_gdb_reporter: false
+  :debug: false
+  :which_ceedling: gem
+  :ceedling_version: 0.32.0
+  :build_root: build
+  :default_tasks:
+  - test:all
+:release_build:
+  :use_assembly: false
+  :artifacts: []
+  :output: MyApp.out
+:test_build:
+  :use_assembly: false
+:paths:
+  :test:
+  - "+:test/**"
+  - "-:test/support"
+  :source:
+  - src/**
+  :support:
+  - test/support
+  :include:
+  - src/**
+  :libraries: []
+  :test_toolchain_include: []
+  :release_toolchain_include: []
+:files:
+  :test: []
+  :source: []
+  :assembly: []
+  :support: []
+  :include: []
+:environment:
+- :rake_columns: '120'
+:defines:
+  :use_test_definition: false
+  :test:
+  - TEST
+  :preprocess: []
+  :release: []
+:flags: {}
+:libraries:
+  :flag: "-l${1}"
+  :path_flag: "-L ${1}"
+  :test: []
+  :release: []
+  :placement: :end
+  :system: []
+:extension:
+  :header: ".h"
+  :source: ".c"
+  :assembly: ".s"
+  :object: ".o"
+  :libraries:
+  - ".a"
+  - ".so"
+  :executable: ".out"
+  :map: ".map"
+  :list: ".lst"
+  :testpass: ".pass"
+  :testfail: ".fail"
+  :dependencies: ".d"
+  :yaml: ".yml"
+:unity:
+  :vendor_path: "/root/.rbenv/versions/3.2.3/lib/ruby/gems/3.2.0/gems/ceedling-0.32.0/vendor"
+  :defines:
+  - UNITY_EXCLUDE_FLOAT
+:cmock:
+  :vendor_path: "/root/.rbenv/versions/3.2.3/lib/ruby/gems/3.2.0/gems/ceedling-0.32.0/vendor"
+  :includes: []
+  :defines: []
+  :mock_prefix: mock_
+  :when_no_prototypes: :warn
+  :enforce_strict_ordering: true
+  :plugins:
+  - :ignore
+  - :callback
+  :treat_as:
+    uint8: HEX8
+    uint16: HEX16
+    uint32: UINT32
+    int8: INT8
+    bool: UINT8
+  :mock_path: build/test/mocks
+  :verbosity: 3
+  :unity_helper: false
+:cexception:
+  :vendor_path: "/root/.rbenv/versions/3.2.3/lib/ruby/gems/3.2.0/gems/ceedling-0.32.0/vendor"
+  :defines: []
+:test_runner:
+  :includes: []
+  :file_suffix: _runner
+:tools:
+  :backtrace_settings:
+    :executable: gdb
+    :name: default_backtrace_settings
+    :stderr_redirect: :auto
+    :optional: true
+    :arguments:
+    - "-q"
+    - "--eval-command run"
+    - "--eval-command backtrace"
+    - "--batch"
+    - "--args"
+  :test_compiler:
+    :executable: gcc
+    :name: default_test_compiler
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - -I"${5}"
+    - -D"${6}"
+    - "-DGNU_COMPILER"
+    - "-g"
+    - ''
+    - -c "${1}"
+    - -o "${2}"
+    - "-MMD"
+    - -MF "${4}"
+  :test_fixture:
+    :executable: "${1}"
+    :name: default_test_fixture
+    :stderr_redirect: :auto
+    :optional: false
+    :arguments: []
+  :test_linker:
+    :executable: gcc
+    :name: default_test_linker
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - ''
+    - "${1}"
+    - "${5}"
+    - -o "${2}"
+    - ''
+    - "${4}"
+    - ''
+  :test_file_preprocessor:
+    :executable: gcc
+    :name: default_test_file_preprocessor
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - "-E"
+    - -I"${4}"
+    - -D"${3}"
+    - "-DGNU_COMPILER"
+    - "-x c"
+    - '"${1}"'
+    - -o "${2}"
+  :test_file_preprocessor_directives:
+    :executable: gcc
+    :name: default_test_file_preprocessor_directives
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - "-E"
+    - -I"${4}"
+    - -D"${3}"
+    - "-DGNU_COMPILER"
+    - "-fdirectives-only"
+    - "-x c"
+    - '"${1}"'
+    - -o "${2}"
+  :test_nested_includes_preprocessor:
+    :executable: gcc
+    :name: default_test_includes_preprocessor
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - "-E"
+    - "-MM"
+    - "-MG"
+    - "-H"
+    - -I"${2}"
+    - -D"${3}"
+    - "-DGNU_COMPILER"
+    - "-nostdinc"
+    - "-x c"
+    - '"${1}"'
+  :test_shallow_includes_preprocessor:
+    :executable: gcc
+    :name: default_test_includes_preprocessor
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - "-E"
+    - "-MM"
+    - "-MG"
+    - "-MP"
+    - -D"${2}"
+    - "-DGNU_COMPILER"
+    - "-nostdinc"
+    - "-x c"
+    - '"${1}"'
+  :release_compiler:
+    :executable: gcc
+    :name: default_release_compiler
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - -I"${5}"
+    - -D"${6}"
+    - "-DGNU_COMPILER"
+    - ''
+    - -c "${1}"
+    - -o "${2}"
+    - "-MMD"
+    - -MF "${4}"
+  :release_linker:
+    :executable: gcc
+    :name: default_release_linker
+    :stderr_redirect: :none
+    :optional: false
+    :arguments:
+    - ''
+    - ''
+    - ''
+    - '"${1}"'
+    - "${5}"
+    - -o "${2}"
+    - ''
+    - "${4}"
+    - ''
+:test_compiler:
+  :arguments: []
+:test_assembler:
+  :arguments: []
+:test_linker:
+  :arguments: []
+:test_fixture:
+  :arguments: []
+  :link_objects: []
+:test_includes_preprocessor:
+  :arguments: []
+:test_file_preprocessor:
+  :arguments: []
+:test_file_preprocessor_directives:
+  :arguments: []
+:test_dependencies_generator:
+  :arguments: []
+:release_compiler:
+  :arguments: []
+:release_linker:
+  :arguments: []
+:release_assembler:
+  :arguments: []
+:release_dependencies_generator:
+  :arguments: []
+:plugins:
+  :load_paths:
+  - "/root/.rbenv/versions/3.2.3/lib/ruby/gems/3.2.0/gems/ceedling-0.32.0/lib/../plugins"
+  :enabled:
+  - module_generator
+  - stdout_pretty_tests_report
+  :display_raw_test_results: false
+  :module_generator_path: "/root/.rbenv/versions/3.2.3/lib/ruby/gems/3.2.0/gems/ceedling-0.32.0/lib/../plugins/module_generator"
+  :stdout_pretty_tests_report_path: "/root/.rbenv/versions/3.2.3/lib/ruby/gems/3.2.0/gems/ceedling-0.32.0/lib/../plugins/stdout_pretty_tests_report"
+:gcov:
+  :utilities:
+  - gcovr
+  :reports:
+  - HtmlBasic
+  :gcovr:
+    :html_medium_threshold: 75
+    :html_high_threshold: 90
+:module_generator:
+  :project_root: "./"
+  :source_root: src/
+  :test_root: test/

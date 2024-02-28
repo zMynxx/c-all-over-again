@@ -1,0 +1,19 @@
+---
+:source:
+  :file: test/test_add.c
+  :dirname: test
+  :basename: test_add.c
+:successes:
+- :test: test_add
+  :line: 46
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 1
+  :passed: 1
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.004168764000496594
