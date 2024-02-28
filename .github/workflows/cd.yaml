@@ -13,10 +13,6 @@ permissions:
   contents: write
   packages: write
 
-env:
-  TEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.32.0-d76db35
-  LATEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:latest
-
 jobs:
   check:
     name: check pr status
@@ -58,7 +54,7 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: ${{ env.TEST_TAG }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -68,7 +64,7 @@ jobs:
           --interactive \
           --rm \
           --volume ./project-demo:/project \
-          ${{ env.TEST_TAG }} \
+          ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:${{ github.sha }} \
           ceedling release
 
       - name: Semantic Versioning
@@ -96,7 +92,7 @@ jobs:
         uses: softprops/action-gh-release@v0.1.15
         with:
           files: /project-demo/build/artifacts/release/MyApp.out
-          tag_name: ${{ steps.new_tag.outputs.new_tag }}
+          tag_name: "${{ format('{0}{1}', 'v', steps.new_tag.outputs.new_tag) }}"
 
       - name: Git Config
         uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
@@ -114,7 +110,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ vars.DOCKERHUB_REPO }}:${{ steps.new_tag.outputs.new_tag }}
-            ${{ vars.DOCKERHUB_REPO }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:22.04-v${{ steps.new_tag.outputs.new_tag }}
+            ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
