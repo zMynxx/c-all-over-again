@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
 
   # Check every PR to main
-  #pull_request:
-  #  branches:
-  #    - "main"
+  pull_request:
+    branches:
+      - "main"
 
 jobs:
   docker-test:
