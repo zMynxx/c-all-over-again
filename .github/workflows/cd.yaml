@@ -1,30 +1,48 @@
 name: CD
 
 on:
-  # Manually trigger publish
-  workflow_dispatch:
+  # Publish on every approved PR
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
 
-  # Publish on every new tag
-  #pull_request:
-  #  branches:
-  #  - "main"
-  #tags:
-  #    - "v*.*.*"
+permissions:
+  id-token: write
+  contents: write
+  packages: write
 
 env:
   TEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.32.0-d76db35
   LATEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:latest
 
 jobs:
-  docker-release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      discussions: write
-    steps:
+  check:
+  name: check pr status
+  runs-on: ubuntu-22.04
+  steps:
+    - name: check if PR is merged
+      uses: zmynx/github-actions/.github/actions/git/check-merge@feature/gha
 
+  ci:
+    needs: [check]
+    name: continuous integration
+    uses: zmynx/c-all-over-again/.github/workflows/ci.yaml@main
+    secrets: inherit
+
+  cd:
+    name: continuous-deployment
+    needs: [check, ci]
+    runs-on: ubuntu-22.04
+    outputs:
+      new_tag: ${{ steps.semver.outputs.new_tag }}
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -59,12 +77,18 @@ jobs:
           ${{ env.TEST_TAG }} \
           ceedling release
 
+      - name: Semantic Versioning
+        id: semver
+        uses: zmynx/github-actions/.github/actions/git/semver-v2@feature/gha
+        with:
+          fallback_version: '0.1.0'
+          prefix: 'v' 
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v0.1.15
-        #if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: build/artifacts/release/MyApp.out
-          tag_name: 22.04-v0.32.0-d76db35
+          files: /project-demo/build/artifacts/release/MyApp.out
+          tag_name: ${{ steps.semver.outputs.new_tag }}
 
       - name: Publish image to DockerHub
         uses: docker/build-push-action@v5.1.0
@@ -74,7 +98,15 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.TEST_TAG }}
-            ${{ env.LATEST_TAG }}
+            ${{ vars.DOCKERHUB_REPO }}:${{ steps.semver.outputs.new_tag }}
+            ${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Git Config
+        uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
+
+      - name: Git Tag
+        uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
+        with:
+          tag: "${{ format('{0}{1}', 'v', steps.semver.outputs.new_tag) }}"
