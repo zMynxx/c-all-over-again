@@ -7,11 +7,11 @@ on:
       - "main"
 
 env:
-  TEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.32.0
+  TEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:test-22.04-v0.32.0-d76db35
   LATEST_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}:latest
 
 jobs:
-  docker:
+  docker-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,6 +41,6 @@ jobs:
           docker run \
           --interactive \
           --rm \
-          --volume ./project-demo/demo2:/project \
+          --volume ./project-demo:/project \
           ${{ env.TEST_TAG }} \
           ceedling test:all

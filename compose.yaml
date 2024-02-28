@@ -17,7 +17,7 @@ services:
         - druxx/ubuntu-ceedling:22.04-v0.32.0-d76db35
         - druxx/ubuntu-ceedling:latest
       args:
-        - RBENV_VERSION=3.2.3
+        - RBENV_VERSION=3.3.0
       labels:
         - maintainer.email=lior.dux@develeap.com
         - maintainer.description=C Development environment
@@ -27,7 +27,7 @@ services:
     stdin_open: true
     command: ["ceedling", "test:all", "release"]
     volumes:
-      - ./project-demo/demo2:/project
+      - ./project-demo:/project
     #restart: unless-stopped
 
     # If your application exposes a port, uncomment the following lines and change
