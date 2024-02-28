@@ -14,21 +14,21 @@ services:
       context: .
       dockerfile: Dockerfile.ubuntu
       tags:
-        - druxx/ubuntu-ceedling:22.04-v0.31.1
+        - druxx/ubuntu-ceedling:22.04-v0.32.0-d76db35
         - druxx/ubuntu-ceedling:latest
       args:
-        - RBENV_VERSION=3.0.6
+        - RBENV_VERSION=3.2.3
       labels:
         - maintainer.email=lior.dux@develeap.com
         - maintainer.description=C Development environment
-        - ceedling.version=v0.31.1
+        - ceedling.version=ceedling-0.32.0-d76db35
         - doxygen.version=v1.9.1
     tty: true
     stdin_open: true
-    command: /bin/bash
+    command: ["ceedling", "test:all", "release"]
     volumes:
-      - ./demo:/project
-    restart: unless-stopped
+      - ./project-demo/demo2:/project
+    #restart: unless-stopped
 
     # If your application exposes a port, uncomment the following lines and change
     # the port numbers as needed. The first number is the host port and the second

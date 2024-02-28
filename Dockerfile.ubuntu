@@ -1,6 +1,9 @@
 FROM ubuntu:22.04 as base
 
 MAINTAINER lior.dux@develeap.com
+LABEL maintainer.description='C Development environment'
+LABEL ceedling.version=v0.31.1
+LABEL doxygen.version=v1.9.1
 
 # Install the required packages
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,7 +22,17 @@ RUN apt-get update && \
   wget \
   curl \
   libz-dev \
-  doxygen
+  doxygen \
+  libssl-dev \
+  libreadline-dev \
+  zlib1g-dev \
+  autoconf \
+  bison \
+  libyaml-dev \
+  libreadline-dev \
+  libncurses5-dev \
+  libffi-dev \
+  libgdbm-dev
 
 # Clean the apt cache
 RUN	apt-get clean &&\
@@ -41,13 +54,15 @@ RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-docto
 RUN echo 'eval "$(~/.rbenv/bin/rbenv init -)"' >> /etc/profile.d/rbenv.sh
 
 # Install rbenv and set the desired version
-ARG RBENV_VERSION=3.0.6
+ARG RBENV_VERSION=3.3.0
 ENV RBENV_VERSION $RBENV_VERSION
 RUN rbenv install $RBENV_VERSION &&\
     rbenv global $RBENV_VERSION
 
 # Install ceedling, cmock and unity
-RUN gem install ceedling
+COPY ./ceedling-0.32.0-d76db35.gem ceedling-0.32.0-d76db35.gem
+RUN gem install constructor deep_merge thor 
+RUN gem install --local ./ceedling-0.32.0-d76db35.gem
 
 ################################################################################
 # Create a final stage for running your application.
