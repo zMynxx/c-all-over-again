@@ -72,17 +72,31 @@ jobs:
           ceedling release
 
       - name: Semantic Versioning
-        id: semver
-        uses: zmynx/github-actions/.github/actions/git/semver-v2@feature/gha
+        id: semverv2
+        uses: zmynx/github-actions/.github/actions/semver-v2@feature/gha
         with:
-          fallback_version: "0.1.0"
+          fallback: "0.1.0"
           prefix: "v"
+
+      - name: Downcase PR body
+        id: downcase
+        shell: bash
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: echo "pr_body_lowercase=${PR_BODY,,}" >> $GITHUB_OUTPUT
+
+      - name: Parse the body for any '#major' or '#minor' keywords
+        id: new_tag
+        shell: bash
+        env:
+          NEW_TAG: ${{ contains(steps.downcase.outputs.pr_body_lowercase, '#major') && steps.semverv2.outputs.major || contains(steps.downcase.outputs.pr_body_lowercase, '#minor') && steps.semverv2.outputs.minor || steps.semverv2.outputs.patch }}
+        run: echo "new_tag=${NEW_TAG}" >> $GITHUB_OUTPUT
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v0.1.15
         with:
           files: /project-demo/build/artifacts/release/MyApp.out
-          tag_name: ${{ steps.semver.outputs.new_tag }}
+          tag_name: ${{ steps.new_tag.outputs.new_tag }}
 
       - name: Git Config
         uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
@@ -90,7 +104,7 @@ jobs:
       - name: Git Tag
         uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
         with:
-          tag: "${{ format('{0}{1}', 'v', steps.semver.outputs.new_tag) }}"
+          tag: "${{ format('{0}{1}', 'v', steps.new_tag.outputs.new_tag) }}"
 
       - name: Publish image to DockerHub
         uses: docker/build-push-action@v5.1.0
@@ -100,7 +114,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ vars.DOCKERHUB_REPO }}:${{ steps.semver.outputs.new_tag }}
+            ${{ vars.DOCKERHUB_REPO }}:${{ steps.new_tag.outputs.new_tag }}
             ${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
