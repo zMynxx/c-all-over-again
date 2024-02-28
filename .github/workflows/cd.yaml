@@ -73,7 +73,7 @@ jobs:
 
       - name: Semantic Versioning
         id: semverv2
-        uses: zmynx/github-actions/.github/actions/semver-v2@feature/gha
+        uses: zmynx/github-actions/.github/actions/git/semver-v2@feature/gha
         with:
           fallback: "0.1.0"
           prefix: "v"
