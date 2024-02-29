@@ -1,8 +1,11 @@
 FROM ubuntu:22.04 as base
 
 MAINTAINER lior.dux@develeap.com
-LABEL maintainer.description='C Development environment'
-LABEL ceedling.version=v0.31.1
+LABEL maintainer.description=C Development environment
+LABEL ceedling.version=ceedling-0.32.0-d76db35
+LABEL unity.version=2.5.4
+LABEL cmock.version=2.5.4
+LABEL cexception.version=1.3.3
 LABEL doxygen.version=v1.9.1
 
 # Install the required packages
@@ -45,12 +48,11 @@ RUN	apt-get clean &&\
 # RUN timedatectl set-timezone $TZ
 
 # Install rbenv-build 
-#RUN curl --fail --silent --show-error --location https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
-RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash 
+RUN curl --fail --silent --show-error --location https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
 ENV PATH="$PATH:/root/.rbenv/bin:/root/.rbenv/shims"
 
 # Validate rbenv using rbev-doctor
-RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
+RUN curl --fail --silent --show-error --location https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
 RUN echo 'eval "$(~/.rbenv/bin/rbenv init -)"' >> /etc/profile.d/rbenv.sh
 
 # Install rbenv and set the desired version
@@ -63,29 +65,7 @@ RUN rbenv install $RBENV_VERSION &&\
 COPY ./ceedling-0.32.0-d76db35.gem ceedling-0.32.0-d76db35.gem
 RUN gem install constructor deep_merge thor 
 RUN gem install --local ./ceedling-0.32.0-d76db35.gem
+HEALTHCHECK --interval=35s --timeout=4s --retries=2 CMD ceedling version || exit 1
 
-################################################################################
-# Create a final stage for running your application.
-#
-# The following commands copy the output from the "build" stage above and tell
-# the container runtime to execute it when the image is run. Ideally this stage
-# contains the minimal runtime dependencies for the application as to produce
-# the smallest image possible. This often means using a different and smaller
-# image than the one used for building the application, but for illustrative
-# purposes the "base" image is used here.
-# FROM base AS final
-# 
-# # Create a non-privileged user that the app will run under.
-# # See https://docs.docker.com/go/dockerfile-user-best-practices/
-# ARG UID=10001
-# ARG USER=ubuntu
-# ENV USER $USER
-# RUN useradd \
-#      --uid "${UID}" \
-#      --create-home \
-#      --shell "/bin/bash" \
-#      --groups sudo \
-#      $USER
-# USER $USER
 WORKDIR /project
 CMD bash
