@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   cd:
-    name: Docker Ceedling test:all
+    name: Docker Push
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
