@@ -20,9 +20,11 @@ services:
       args:
         - RBENV_VERSION=3.3.0
       labels:
-        - maintainer.email=lior.dux@develeap.com
-        - maintainer.description=C Development environment
+        - maintainer.description='C Development environment with ceedling, cmock unity, and doxygen'
         - ceedling.version=ceedling-0.32.0-d76db35
+        - unity.version=2.5.4
+        - cmock.version=2.5.4
+        - cexception.version=1.3.3
         - doxygen.version=v1.9.1
     tty: true
     stdin_open: true

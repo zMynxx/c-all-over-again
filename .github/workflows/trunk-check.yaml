@@ -13,6 +13,7 @@ jobs:
     name: Trunk Check Runner
     runs-on: ubuntu-latest
     permissions:
+      actions: write # For caching
       checks: write # For trunk to post annotations
       contents: read # For repo checkout
 
@@ -22,3 +23,5 @@ jobs:
 
       - name: Trunk Check
         uses: trunk-io/trunk-action@v1.1.10
+        with:
+          check-mode: populate_cache_only

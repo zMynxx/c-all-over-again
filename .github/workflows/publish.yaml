@@ -5,6 +5,8 @@ name: Publish
 on:
   # Publish a new image to Dockerhub on changes to Dockerfile
   push:
+    branches:
+      - main
     paths:
       - Dockerfile.ubuntu
 
@@ -13,16 +15,8 @@ permissions:
   contents: write
 
 jobs:
-  check:
-    name: check pr status
-    runs-on: ubuntu-22.04
-    steps:
-      - name: check if PR is merged
-        uses: zmynx/github-actions/.github/actions/git/check-merge@feature/gha
-
   cd:
-    name: publish-dockerhub
-    needs: [check]
+    name: Docker Ceedling test:all
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -40,6 +34,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}
+
       # In case of a new image I'd like to publish
       - name: Publish image to DockerHub
         uses: docker/build-push-action@v5.1.0
@@ -48,7 +48,9 @@ jobs:
           file: Dockerfile.ubuntu
           platforms: linux/amd64
           push: true
+          labels: ${{ steps.meta.outputs.labels }}
           tags: |
+            ${{ steps.meta.outputs.tags }}
             ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.32.0-d76db35-${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
