@@ -1,3 +1,9 @@
+################################################################################
+# File: Makefile
+# Description: A simple makefile for running tests using unity framework.
+# Taken and modified from: [here](https://www.throwtheswitch.org/s/makefile)
+# Comments and explanations added by: [me](lior.dux@develeap.com) aka zMynxx.
+################################################################################
 #/*******************************************************************************
 # *   OS DECETIONS 
 # ******************************************************************************/
