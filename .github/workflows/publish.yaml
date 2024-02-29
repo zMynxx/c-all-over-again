@@ -16,8 +16,7 @@ permissions:
 
 jobs:
   cd:
-    name: publish-dockerhub
-    needs: [check]
+    name: Docker Ceedling test:all
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
