@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.pull_request.head.ref }}
           fetch-depth: 0
 
       - name: Set up QEMU
@@ -50,7 +50,7 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: ${{ github.repo }}:${{ github.sha }}
+          tags: ${{ github.repository.name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,7 +60,7 @@ jobs:
           --interactive \
           --rm \
           --volume ./project-demo:/project \
-          ${{ github.repo }}:${{ github.sha }} \
+          ${{ github.repository.name }}:${{ github.sha }} \
           ceedling release
 
       - name: Semantic Versioning
@@ -74,7 +74,7 @@ jobs:
         id: downcase
         shell: bash
         env:
-          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_BODY: ${{ github.pull_request.body }}
         run: echo "pr_body_lowercase=${PR_BODY,,}" >> $GITHUB_OUTPUT
 
       - name: Parse the body for any '#major' or '#minor' keywords
