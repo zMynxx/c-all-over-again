@@ -13,6 +13,7 @@ on:
 
 jobs:
   docker-test:
+    name: Ceedling test:all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

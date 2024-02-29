@@ -24,7 +24,7 @@ jobs:
         uses: zmynx/github-actions/.github/actions/git/check-merge@feature/gha
 
   cd:
-    name: continuous-deployment
+    name: continuous-delivery
     needs: [check]
     runs-on: ubuntu-22.04
     outputs:
