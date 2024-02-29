@@ -5,6 +5,8 @@ name: Publish
 on:
   # Publish a new image to Dockerhub on changes to Dockerfile
   push:
+    branches:
+      - main
     paths:
       - Dockerfile.ubuntu
 
@@ -13,13 +15,6 @@ permissions:
   contents: write
 
 jobs:
-  check:
-    name: check pr status
-    runs-on: ubuntu-22.04
-    steps:
-      - name: check if PR is merged
-        uses: zmynx/github-actions/.github/actions/git/check-merge@feature/gha
-
   cd:
     name: publish-dockerhub
     needs: [check]
