@@ -1,7 +1,7 @@
 FROM ubuntu:22.04 as base
 
 MAINTAINER lior.dux@develeap.com
-LABEL maintainer.description=C Development environment
+LABEL maintainer.description='C Development environment with ceedling, cmock unity, and doxygen'
 LABEL ceedling.version=ceedling-0.32.0-d76db35
 LABEL unity.version=2.5.4
 LABEL cmock.version=2.5.4
