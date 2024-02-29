@@ -7,7 +7,7 @@ on:
   # Check every PR to main
   pull_request:
     branches:
-      - "main"
+      - main
 
 jobs:
   docker-test:
