@@ -41,13 +41,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Semantic Versioning
-        id: semverv2
-        uses: zmynx/github-actions/.github/actions/git/semver-v2@feature/gha
-        with:
-          fallback: "0.1.0"
-          prefix: "v"
-
       # In case of a new image I'd like to publish
       - name: Publish image to DockerHub
         uses: docker/build-push-action@v5.1.0
@@ -57,7 +50,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:22.04-v${{ steps.new_tag.outputs.new_tag }}
+            ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:22.04-v0.32.0-d76db35-${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME}}/${{ vars.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
