@@ -91,21 +91,20 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v0.1.15
         with:
+          tag_name: "${{ format('{0}{1}', 'v', steps.new_tag.outputs.new_tag) }}"
           files: |
             project-demo/build/artifacts/release/MyApp.out
             ceedling-0.32.0-d76db35.gem
             LICENSE
 
-          tag_name: "${{ format('{0}{1}', 'v', steps.new_tag.outputs.new_tag) }}"
-
-      - name: Git Config
-        uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
-
-      - name: Git Tag
-        uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
-        with:
-          tag: "${{ format('{0}{1}', 'v', steps.new_tag.outputs.new_tag) }}"
-
+      #       - name: Git Config
+      #         uses: zmynx/github-actions/.github/actions/git/git-config@feature/gha
+      #
+      #       - name: Git Tag
+      #         uses: zmynx/github-actions/.github/actions/git/git-tag@feature/gha
+      #         with:
+      #           tag: "${{ format('{0}{1}', 'v', steps.new_tag.outputs.new_tag) }}"
+      #
       #      - name: Publish image to DockerHub
       #        uses: docker/build-push-action@v5.1.0
       #        with:
