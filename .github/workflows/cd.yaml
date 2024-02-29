@@ -50,7 +50,7 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: ${{ github.repository.name }}:${{ github.sha }}
+          tags: ${{ github.repository }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,7 +60,7 @@ jobs:
           --interactive \
           --rm \
           --volume ./project-demo:/project \
-          ${{ github.repository.name }}:${{ github.sha }} \
+          ${{ github.repository }}:${{ github.sha }} \
           ceedling release
 
       - name: Semantic Versioning
