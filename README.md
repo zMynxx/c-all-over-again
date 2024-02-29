@@ -19,6 +19,7 @@ Some of the tools included are:
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Docker Image](#docker-image)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -85,7 +86,8 @@ Explain how others can contribute to the project. Include guidelines for submitt
 
     GNU GENERAL PUBLIC LICENSE
 
-This project is licensed under the License Name. See the LICENSE.md file for details.
+This project is licensed under the License Name. See the [LICENSE.md](LICENSE)
+file for details.
 
 ## Contact
 
